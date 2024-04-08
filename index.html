@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+    <title>sixmonths</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lovers+Quarrel&display=swap" rel="stylesheet">
+ <link rel="icon" type="image/x-icon" href="bee.png">
+</head>
+<body>
+
+	<div class="container">
+		<div class="gallery">
+
+			<div class="img-box" onclick="changeHeight(this)"><h3>june</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>july</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>august</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>september</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>october</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>november</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>december</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>january</h3></div>
+			<div class="img-box" onclick="changeHeight(this)"><h3>febuary</h3></div>
+		</div>
+	</div>
+	
+	<script>
+	function changeHeight(clickedElement) {
+
+		var defaultHeight = '100%';
+		var enlargedHeight = '10000px';
+
+		var isEnlarged = clickedElement.style.height === enlargedHeight;
+
+		var allElements = document.querySelectorAll('.img-box');
+
+
+		allElements.forEach(function(element) {
+			element.style.height = '100%';
+		});
+
+		clickedElement.style.height = isEnlarged ? defaultHeight : enlargedHeight;
+	}
+	</script>
+
+</body>
+</html>
