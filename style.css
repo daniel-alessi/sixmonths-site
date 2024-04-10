@@ -96,7 +96,7 @@ html, body {
 }
 
 .img-box:nth-child(9) {
-	background: url("febuary.jpg");
+	background: url("february.jpg");
 	background-size: cover;
 	background-position:center;
 }
