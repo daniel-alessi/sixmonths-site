@@ -1,5 +1,5 @@
 html, body {
-    height: 135%;
+    height: 147%;
 	width: 100%;
     margin: 0;
 
@@ -109,6 +109,12 @@ html, body {
 
 .img-box:nth-child(11) {
 	background: url("april.jpg");
+	background-size: cover;
+	background-position:center;
+}
+
+.img-box:nth-child(12) {
+	background: url("may.jpg");
 	background-size: cover;
 	background-position:center;
 }
