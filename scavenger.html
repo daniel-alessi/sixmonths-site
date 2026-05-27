@@ -26,20 +26,63 @@
 	}
 
 	.lock-label {
-		font-size: 22px;
+		font-size: 18px;
 		line-height: 1.6;
-		max-width: 340px;
+		max-width: 320px;
 		text-align: center;
 	}
 
 	.message-text {
-		font-size: 22px;
-		line-height: 1.7;
+		font-size: 18px;
+		line-height: 1.6;
 	}
 
 	.lock-error {
-		font-size: 16px;
+		font-size: 15px;
 	}
+
+	/* ── Poem Page ── */
+	#poem-page {
+		width: 100%;
+		height: 100vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: opacity 0.5s ease;
+	}
+
+	.poem-box {
+		max-width: 480px;
+		padding: 40px 32px;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 28px;
+	}
+
+	.poem-stanza {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.poem-line {
+		font-family: 'Playfair Display', serif;
+		font-style: italic;
+		font-size: 19px;
+		color: #8a5c3f;
+		line-height: 1.7;
+		margin: 0;
+	}
+
+	.poem-signature {
+		font-family: 'Playfair Display', serif;
+		font-size: 18px;
+		color: #b5876a;
+		margin: 0;
+	}
+
 </style>
 </head>
 <body>
@@ -50,10 +93,26 @@
 		<button class="tab-btn active">scavenger hunt</button>
 	</nav>
 
-	<!-- Password Gate -->
-	<div id="password-gate">
-		<div class="lock-box">
-			<p class="lock-label">enter the code 🐝</p>
+	<!-- Poem Page -->
+	<div id="poem-page">
+		<div class="poem-box">
+			<div class="poem-stanza">
+				<p class="poem-line">How could I forget the day we first met?</p>
+				<p class="poem-line">Your moonlit smile, a scene I'd remember.</p>
+				<p class="poem-line">I was captured by your bubbles, to never regret,</p>
+				<p class="poem-line">Your smile held me captive, I had to surrender.</p>
+			</div>
+			<div class="poem-stanza">
+				<p class="poem-line">The days between us almost always fly,</p>
+				<p class="poem-line">Building and mending bonds to last forever.</p>
+				<p class="poem-line">The distance giving me reason to cry,</p>
+				<p class="poem-line">It's only some time till we can be together.</p>
+			</div>
+			<div class="poem-stanza">
+				<p class="poem-line">Planning life with you,</p>
+				<p class="poem-line">Something I'd love to pursue.</p>
+			</div>
+			<p class="poem-signature">— Daniel</p>
 			<input
 				id="password-input"
 				type="password"
@@ -72,13 +131,13 @@
 
 			<!-- Sweet message -->
 			<div class="message-box">
-				<p class="message-text">Hello beautiful! i know its been a while since we been together but i still wanted to make sure our anniversary could still be special for you!</p>
-				<p class="message-text">so i made a fun hide and go seek game! 🐝</p>
+				<p class="message-text">Hello beautiful! I know it's been a while since we've been together, but I wanted to make sure our anniversary could still be special for you!</p>
+				<p class="message-text">So I made a fun hide and go seek game!</p>
 			</div>
 
 			<!-- Puzzle 2: time-based PIN -->
 			<div class="lock-box" id="puzzle2">
-				<p class="lock-label">for your next clue... do you remember our special song? the next key is hidden in the first line of that song 🐝</p>
+				<p class="lock-label">For your next clue... do you remember our special song? The next key is hidden in the first line of that song</p>
 				<input
 					id="time-input"
 					type="password"
@@ -96,11 +155,12 @@
 	<!-- Unscramble puzzle — lives outside scavenger-content so it fully replaces the page -->
 	<div id="unscramble-section" style="display:none;">
 		<div class="unscramble-wrapper">
-			<p class="lock-label">unscramble the letters 🐝</p>
+			<p class="scavenger-subtitle">your next surprise is hiding somewhere in this room...</p>
+			<p class="lock-label">Unscramble the letters!</p>
 			<div class="letter-bank" id="letter-bank"></div>
 			<div class="answer-area" id="answer-area"></div>
 			<div id="unscramble-success" style="display:none;">
-				<p class="scavenger-subtitle">you found it! now go look! 🐝</p>
+				<p class="scavenger-subtitle">You found it! Now go look!</p>
 			</div>
 		</div>
 	</div>
@@ -114,12 +174,12 @@
 			return;
 		}
 		if (value === PASSWORD) {
-			const gate = document.getElementById('password-gate');
-			gate.style.opacity = '0';
+			const poem = document.getElementById('poem-page');
+			poem.style.opacity = '0';
 			setTimeout(function() {
-				gate.style.display = 'none';
+				poem.style.display = 'none';
 				document.getElementById('scavenger-content').style.display = 'block';
-			}, 400);
+			}, 500);
 		} else {
 			const input = document.getElementById('password-input');
 			const error = document.getElementById('password-error');
@@ -167,11 +227,11 @@
 	}
 
 	// ── Unscramble "I AM UNDER YOUR BED" ──
-	const PHRASE_WORDS = ["I", "AM", "UNDER", "YOUR", "BED"];
-	const SCRAMBLED_TILES = ["D", "O", "U", "B", "E", "R", "N", "A", "Y", "M", "E", "U", "I", "R", "D"];
+	const PHRASE_WORDS = ["UNDER", "YOUR", "BED"];
+	const SCRAMBLED_TILES = ["B", "E", "R", "U", "N", "D", "O", "Y", "U", "E", "R", "D"];
 	let selectedTile = null;
 	let correctCount = 0;
-	const TOTAL_LETTERS = 15;
+	const TOTAL_LETTERS = 12;
 
 	function initUnscramble() {
 		const bank = document.getElementById('letter-bank');

@@ -191,7 +191,7 @@ html, body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 16px;
+	gap: 12px;
 }
 
 .lock-label {
@@ -280,7 +280,7 @@ html, body {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding-top: 60px;
+	padding: 70px 0 20px;
 	box-sizing: border-box;
 }
 
@@ -412,10 +412,10 @@ html, body {
 
 /* ── Sweet Message ── */
 .message-box {
-	max-width: 520px;
+	max-width: 460px;
 	text-align: center;
-	padding: 40px 32px 32px;
-	margin-bottom: 40px;
+	padding: 0 24px;
+	margin-bottom: 24px;
 }
 
 .message-text {
@@ -423,5 +423,5 @@ html, body {
 	font-size: 34px;
 	color: #8a5c3f;
 	line-height: 1.5;
-	margin: 0 0 18px 0;
+	margin: 0 0 8px 0;
 }
