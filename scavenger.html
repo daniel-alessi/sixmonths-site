@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+    <title>scavenger hunt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lovers+Quarrel&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+ <link rel="icon" type="image/x-icon" href="bee.png">
+<style>
+	/* ── No scroll past page end ── */
+	html, body {
+		height: 100%;
+		overflow: hidden;
+		background: #FEF0E5;
+	}
+
+	/* ── Playfair Display overrides for scavenger page ── */
+	.lock-label, .lock-error, .message-text,
+	.scavenger-title, .scavenger-subtitle,
+	#password-input, .pin-box,
+	.letter-tile, .letter-slot.correct {
+		font-family: 'Playfair Display', serif;
+	}
+
+	.lock-label {
+		font-size: 22px;
+		line-height: 1.6;
+		max-width: 340px;
+		text-align: center;
+	}
+
+	.message-text {
+		font-size: 22px;
+		line-height: 1.7;
+	}
+
+	.lock-error {
+		font-size: 16px;
+	}
+</style>
+</head>
+<body>
+
+	<!-- Always-visible Tab Navigation -->
+	<nav class="tab-nav">
+		<button class="tab-btn" onclick="window.location.href='index.html'">gallery</button>
+		<button class="tab-btn active">scavenger hunt</button>
+	</nav>
+
+	<!-- Password Gate -->
+	<div id="password-gate">
+		<div class="lock-box">
+			<p class="lock-label">enter the code 🐝</p>
+			<input
+				id="password-input"
+				type="password"
+				maxlength="4"
+				inputmode="text"
+				placeholder="· · · ·"
+				onInput="checkPassword(this.value)"
+			/>
+			<p id="password-error" class="lock-error"></p>
+		</div>
+	</div>
+
+	<!-- Scavenger Hunt Content (hidden until unlocked) -->
+	<div id="scavenger-content" style="display:none; transition: opacity 0.4s ease;">
+		<div class="scavenger-container">
+
+			<!-- Sweet message -->
+			<div class="message-box">
+				<p class="message-text">Hello beautiful! i know its been a while since we been together but i still wanted to make sure our anniversary could still be special for you!</p>
+				<p class="message-text">so i made a fun hide and go seek game! 🐝</p>
+			</div>
+
+			<!-- Puzzle 2: time-based PIN -->
+			<div class="lock-box" id="puzzle2">
+				<p class="lock-label">for your next clue... do you remember our special song? the next key is hidden in the first line of that song 🐝</p>
+				<input
+					id="time-input"
+					type="password"
+					maxlength="4"
+					inputmode="numeric"
+					placeholder="· · · ·"
+					onInput="checkTimePassword(this.value)"
+				/>
+				<p id="time-error" class="lock-error"></p>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Unscramble puzzle — lives outside scavenger-content so it fully replaces the page -->
+	<div id="unscramble-section" style="display:none;">
+		<div class="unscramble-wrapper">
+			<p class="lock-label">unscramble the letters 🐝</p>
+			<div class="letter-bank" id="letter-bank"></div>
+			<div class="answer-area" id="answer-area"></div>
+			<div id="unscramble-success" style="display:none;">
+				<p class="scavenger-subtitle">you found it! now go look! 🐝</p>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	const PASSWORD = 'gggn';
+
+	function checkPassword(value) {
+		if (value.length < 4) {
+			document.getElementById('password-error').textContent = '';
+			return;
+		}
+		if (value === PASSWORD) {
+			const gate = document.getElementById('password-gate');
+			gate.style.opacity = '0';
+			setTimeout(function() {
+				gate.style.display = 'none';
+				document.getElementById('scavenger-content').style.display = 'block';
+			}, 400);
+		} else {
+			const input = document.getElementById('password-input');
+			const error = document.getElementById('password-error');
+			error.textContent = 'try again!';
+			input.value = '';
+			input.classList.add('shake');
+			setTimeout(function() { input.classList.remove('shake'); }, 500);
+		}
+	}
+
+	function getTimePasswords() {
+		const passwords = [];
+		for (let offset = -1; offset <= 1; offset++) {
+			const t = new Date(Date.now() + offset * 60000);
+			const raw = t.getHours() % 12 || 12;
+			const hh = String(raw).padStart(2, '0');
+			const mm = String(t.getMinutes()).padStart(2, '0');
+			passwords.push(hh + mm);
+		}
+		return passwords;
+	}
+
+	function checkTimePassword(value) {
+		if (value.length < 4) {
+			document.getElementById('time-error').textContent = '';
+			return;
+		}
+		if (getTimePasswords().includes(value)) {
+			// Fade out the entire scavenger content, then replace with unscramble
+			const content = document.getElementById('scavenger-content');
+			content.style.opacity = '0';
+			setTimeout(function() {
+				content.style.display = 'none';
+				document.getElementById('unscramble-section').style.display = 'block';
+				initUnscramble();
+			}, 400);
+		} else {
+			const input = document.getElementById('time-input');
+			const error = document.getElementById('time-error');
+			error.textContent = 'try again!';
+			input.value = '';
+			input.classList.add('shake');
+			setTimeout(function() { input.classList.remove('shake'); }, 500);
+		}
+	}
+
+	// ── Unscramble "I AM UNDER YOUR BED" ──
+	const PHRASE_WORDS = ["I", "AM", "UNDER", "YOUR", "BED"];
+	const SCRAMBLED_TILES = ["D", "O", "U", "B", "E", "R", "N", "A", "Y", "M", "E", "U", "I", "R", "D"];
+	let selectedTile = null;
+	let correctCount = 0;
+	const TOTAL_LETTERS = 15;
+
+	function initUnscramble() {
+		const bank = document.getElementById('letter-bank');
+		const answerArea = document.getElementById('answer-area');
+
+		SCRAMBLED_TILES.forEach(function(letter, i) {
+			const tile = document.createElement('div');
+			tile.className = 'letter-tile';
+			tile.id = 'tile-' + i;
+			tile.textContent = letter;
+			tile.dataset.letter = letter;
+			tile.draggable = true;
+
+			tile.addEventListener('click', function() {
+				if (selectedTile === tile) {
+					tile.classList.remove('selected');
+					selectedTile = null;
+				} else {
+					if (selectedTile) selectedTile.classList.remove('selected');
+					selectedTile = tile;
+					tile.classList.add('selected');
+				}
+			});
+
+			tile.addEventListener('dragstart', function(e) {
+				e.dataTransfer.setData('tileId', tile.id);
+				setTimeout(function() { tile.classList.add('dragging'); }, 0);
+			});
+			tile.addEventListener('dragend', function() {
+				tile.classList.remove('dragging');
+			});
+
+			bank.appendChild(tile);
+		});
+
+		PHRASE_WORDS.forEach(function(word) {
+			const group = document.createElement('div');
+			group.className = 'word-group';
+
+			word.split('').forEach(function(letter) {
+				const slot = document.createElement('div');
+				slot.className = 'letter-slot';
+				slot.dataset.answer = letter;
+
+				slot.addEventListener('click', function() {
+					if (slot.classList.contains('correct')) return;
+					if (selectedTile) attemptPlace(selectedTile, slot);
+				});
+
+				slot.addEventListener('dragover', function(e) {
+					e.preventDefault();
+					if (!slot.classList.contains('correct')) slot.classList.add('drag-over');
+				});
+				slot.addEventListener('dragleave', function() {
+					slot.classList.remove('drag-over');
+				});
+				slot.addEventListener('drop', function(e) {
+					e.preventDefault();
+					slot.classList.remove('drag-over');
+					if (slot.classList.contains('correct')) return;
+					const tile = document.getElementById(e.dataTransfer.getData('tileId'));
+					if (tile) attemptPlace(tile, slot);
+				});
+
+				group.appendChild(slot);
+			});
+
+			answerArea.appendChild(group);
+		});
+	}
+
+	function attemptPlace(tile, slot) {
+		if (slot.classList.contains('correct')) return;
+		const letter = tile.dataset.letter;
+		const answer = slot.dataset.answer;
+
+		tile.classList.remove('selected');
+		selectedTile = null;
+
+		if (letter === answer) {
+			slot.textContent = letter;
+			slot.classList.add('correct');
+			tile.style.visibility = 'hidden';
+			tile.style.pointerEvents = 'none';
+			correctCount++;
+			if (correctCount === TOTAL_LETTERS) {
+				setTimeout(function() {
+					document.getElementById('unscramble-success').style.display = 'block';
+				}, 600);
+			}
+		} else {
+			slot.classList.add('wrong');
+			setTimeout(function() { slot.classList.remove('wrong'); }, 500);
+		}
+	}
+	</script>
+
+</body>
+</html>

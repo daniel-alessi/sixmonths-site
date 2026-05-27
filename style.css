@@ -5,6 +5,46 @@ html, body {
 
 }
 
+/* ── Tab Navigation ── */
+.tab-nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100;
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px 0 10px;
+	background: #FEF0E5;
+	border-bottom: 1px solid rgba(0,0,0,0.07);
+	box-sizing: border-box;
+}
+
+.tab-btn {
+	background: none;
+	border: 2px solid transparent;
+	border-radius: 30px;
+	padding: 6px 22px;
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 22px;
+	color: #b5876a;
+	cursor: pointer;
+	transition: color 0.2s, border-color 0.2s;
+	letter-spacing: 0.5px;
+}
+
+.tab-btn:hover {
+	color: #8a5c3f;
+}
+
+.tab-btn.active {
+	color: #8a5c3f;
+	border-color: #c9a07a;
+	cursor: default;
+}
+
+/* ── Gallery (unchanged from original) ── */
 .container {
 	width:100%;
 	height: 100%;
@@ -12,6 +52,7 @@ html, body {
 	display:flex;
 	align-items:center;
 	justify-content:center;
+	margin-top: 55px;
 }
 
 .gallery {
@@ -25,8 +66,8 @@ html, body {
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	
-	
+
+
 }
 
 .img-box {
@@ -128,11 +169,259 @@ html, body {
 	font-size: 29px;
 	padding: 0;
 	margin: 0;
-	
+
 }
 
 .img-box:hover {
-	cursor:pointer;	
+	cursor:pointer;
 }
 
+/* ── Password Gate ── */
+#password-gate {
+	width: 100%;
+	height: 100vh;
+	background: #FEF0E5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: opacity 0.4s ease;
+}
 
+.lock-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+}
+
+.lock-label {
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 38px;
+	color: #8a5c3f;
+	margin: 0;
+}
+
+#password-input,
+#time-input {
+	width: 160px;
+	padding: 10px 18px;
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 32px;
+	text-align: center;
+	letter-spacing: 8px;
+	border: 2px solid #c9a07a;
+	border-radius: 30px;
+	background: #fff8f2;
+	color: #8a5c3f;
+	outline: none;
+	transition: border-color 0.2s;
+	display: block;
+	margin: 0 auto;
+}
+
+#password-input:focus,
+#time-input:focus {
+	border-color: #8a5c3f;
+}
+
+.lock-error {
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 24px;
+	color: #c97a7a;
+	margin: 0;
+	min-height: 28px;
+}
+
+@keyframes shake {
+	0%   { transform: translateX(0); }
+	20%  { transform: translateX(-8px); }
+	40%  { transform: translateX(8px); }
+	60%  { transform: translateX(-6px); }
+	80%  { transform: translateX(6px); }
+	100% { transform: translateX(0); }
+}
+
+.shake {
+	animation: shake 0.4s ease;
+}
+
+/* ── PIN Input ── */
+.pin-input-group {
+	display: flex;
+	gap: 12px;
+}
+
+.pin-box {
+	width: 56px;
+	height: 64px;
+	text-align: center;
+	font-family: 'Playfair Display', serif;
+	font-size: 28px;
+	color: #8a5c3f;
+	background: #fff8f2;
+	border: 2px solid #c9a07a;
+	border-radius: 14px;
+	outline: none;
+	caret-color: #c9a07a;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pin-box:focus {
+	border-color: #8a5c3f;
+	box-shadow: 0 0 0 3px rgba(138, 92, 63, 0.12);
+}
+
+/* ── Scavenger Hunt Page ── */
+.scavenger-container {
+	width: 100%;
+	min-height: 100vh;
+	background: #FEF0E5;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding-top: 60px;
+	box-sizing: border-box;
+}
+
+.scavenger-title {
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 72px;
+	color: #8a5c3f;
+	margin: 0 0 12px 0;
+}
+
+.scavenger-subtitle {
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 30px;
+	color: #b5876a;
+	margin: 0;
+}
+
+/* ── Unscramble Puzzle ── */
+.unscramble-wrapper {
+	width: 100%;
+	min-height: calc(100vh - 60px);
+	background: #FEF0E5;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 32px;
+	padding: 40px 20px;
+	box-sizing: border-box;
+}
+
+.letter-bank {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	max-width: 500px;
+}
+
+.letter-tile {
+	width: 52px;
+	height: 52px;
+	background: #fff8f2;
+	border: 2px solid #c9a07a;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 32px;
+	color: #8a5c3f;
+	cursor: grab;
+	user-select: none;
+	transition: transform 0.15s, box-shadow 0.15s, border-color 0.2s;
+}
+
+.letter-tile:active {
+	cursor: grabbing;
+}
+
+.letter-tile:hover {
+	transform: scale(1.08);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+.letter-tile.selected {
+	border-color: #8a5c3f;
+	background: #f0d8c0;
+	transform: scale(1.12);
+	box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.letter-tile.dragging {
+	opacity: 0.4;
+}
+
+.answer-area {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px 20px;
+	justify-content: center;
+	max-width: 520px;
+}
+
+.word-group {
+	display: flex;
+	gap: 6px;
+}
+
+.letter-slot {
+	width: 52px;
+	height: 52px;
+	border: 2px dashed #c9a07a;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 32px;
+	color: #8a5c3f;
+	cursor: pointer;
+	transition: background 0.2s, border-color 0.2s;
+	background: transparent;
+}
+
+.letter-slot.drag-over {
+	background: #f0d8c0;
+	border-color: #8a5c3f;
+	border-style: solid;
+}
+
+.letter-slot.correct {
+	background: #c8f0d0;
+	border: 2px solid #5a9e6f;
+	border-style: solid;
+	color: #2d6b42;
+	cursor: default;
+}
+
+.letter-slot.wrong {
+	background: #f5c8c8;
+	border: 2px solid #c97a7a;
+	animation: shake 0.4s ease;
+}
+
+#unscramble-success {
+	text-align: center;
+}
+
+/* ── Sweet Message ── */
+.message-box {
+	max-width: 520px;
+	text-align: center;
+	padding: 40px 32px 32px;
+	margin-bottom: 40px;
+}
+
+.message-text {
+	font-family: 'Lovers Quarrel', cursive;
+	font-size: 34px;
+	color: #8a5c3f;
+	line-height: 1.5;
+	margin: 0 0 18px 0;
+}
