@@ -2,6 +2,7 @@ html, body {
     height: 147%;
 	width: 100%;
     margin: 0;
+    background: #FEF0E5;
 
 }
 
@@ -308,7 +309,7 @@ html, body {
 	align-items: center;
 	justify-content: center;
 	gap: 32px;
-	padding: 40px 20px;
+	padding: 80px 20px 40px;
 	box-sizing: border-box;
 }
 
