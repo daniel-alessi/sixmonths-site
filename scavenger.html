@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Lovers+Quarrel&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
  <link rel="icon" type="image/x-icon" href="bee.png">
 <style>
-	/* ── No scroll past page end ── */
 	html, body {
-		height: 100%;
-		overflow: hidden;
+		height: auto;
+		min-height: 100%;
+		overflow-y: auto;
 		background: #FEF0E5;
 	}
 
@@ -44,10 +44,11 @@
 	/* ── Poem Page ── */
 	#poem-page {
 		width: 100%;
-		height: 100vh;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: center;
+		padding-top: 80px;
+		box-sizing: border-box;
 		transition: opacity 0.5s ease;
 	}
 
@@ -81,6 +82,127 @@
 		font-size: 18px;
 		color: #b5876a;
 		margin: 0;
+	}
+
+	/* ── Wordle ── */
+	.wordle-wrapper {
+		width: 100%;
+		min-height: calc(100vh - 60px);
+		background: #FEF0E5;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+		padding: 80px 20px 40px;
+		box-sizing: border-box;
+	}
+
+	#wordle-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.wordle-row {
+		display: flex;
+		gap: 6px;
+	}
+
+	.wordle-cell {
+		width: 52px;
+		height: 52px;
+		border: 2px solid #c9a07a;
+		border-radius: 8px;
+		background: #fff8f2;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-family: 'Playfair Display', serif;
+		font-size: 22px;
+		font-weight: 600;
+		color: #8a5c3f;
+		transition: background 0.3s, border-color 0.3s, color 0.3s;
+	}
+
+	.wordle-cell.correct {
+		background: #5a9e6f;
+		border-color: #5a9e6f;
+		color: white;
+	}
+
+	.wordle-cell.present {
+		background: #c9a07a;
+		border-color: #c9a07a;
+		color: white;
+	}
+
+	.wordle-cell.absent {
+		background: #b5a09a;
+		border-color: #b5a09a;
+		color: white;
+	}
+
+	#wordle-keyboard {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		align-items: center;
+	}
+
+	.wordle-kb-row {
+		display: flex;
+		gap: 5px;
+		justify-content: center;
+	}
+
+	.wordle-key {
+		height: 52px;
+		min-width: 34px;
+		padding: 0 6px;
+		border: 2px solid #c9a07a;
+		border-radius: 8px;
+		background: #fff8f2;
+		font-family: 'Playfair Display', serif;
+		font-size: 14px;
+		font-weight: 600;
+		color: #8a5c3f;
+		cursor: pointer;
+		transition: background 0.2s, border-color 0.2s, color 0.2s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.wordle-key.wide {
+		min-width: 52px;
+		font-size: 12px;
+	}
+
+	.wordle-key.correct {
+		background: #5a9e6f;
+		border-color: #5a9e6f;
+		color: white;
+	}
+
+	.wordle-key.present {
+		background: #c9a07a;
+		border-color: #c9a07a;
+		color: white;
+	}
+
+	.wordle-key.absent {
+		background: #b5a09a;
+		border-color: #b5a09a;
+		color: white;
+	}
+
+	#wordle-message {
+		font-family: 'Playfair Display', serif;
+		font-size: 16px;
+		color: #8a5c3f;
+		min-height: 24px;
+		text-align: center;
 	}
 
 </style>
@@ -152,7 +274,17 @@
 		</div>
 	</div>
 
-	<!-- Unscramble puzzle — lives outside scavenger-content so it fully replaces the page -->
+	<!-- Wordle puzzle -->
+	<div id="wordle-section" style="display:none; transition: opacity 0.4s ease;">
+		<div class="wordle-wrapper">
+			<p class="scavenger-subtitle">guess the word!</p>
+			<div id="wordle-grid"></div>
+			<p id="wordle-message"></p>
+			<div id="wordle-keyboard"></div>
+		</div>
+	</div>
+
+	<!-- Unscramble puzzle -->
 	<div id="unscramble-section" style="display:none;">
 		<div class="unscramble-wrapper">
 			<p class="scavenger-subtitle">your next surprise is hiding somewhere in this room...</p>
@@ -208,13 +340,13 @@
 			return;
 		}
 		if (getTimePasswords().includes(value)) {
-			// Fade out the entire scavenger content, then replace with unscramble
 			const content = document.getElementById('scavenger-content');
 			content.style.opacity = '0';
 			setTimeout(function() {
 				content.style.display = 'none';
-				document.getElementById('unscramble-section').style.display = 'block';
-				initUnscramble();
+				const wordle = document.getElementById('wordle-section');
+				wordle.style.display = 'block';
+				initWordle();
 			}, 400);
 		} else {
 			const input = document.getElementById('time-input');
@@ -226,7 +358,173 @@
 		}
 	}
 
-	// ── Unscramble "I AM UNDER YOUR BED" ──
+	// ── Wordle ──
+	const WORDLE_ANSWER = 'GLAMP';
+	let wordleCurrentGuess = [];
+	let wordleActive = false;
+	let wordleCurrentRow = null;
+
+	function initWordle() {
+		wordleActive = true;
+		wordleCurrentGuess = [];
+		document.getElementById('wordle-grid').innerHTML = '';
+		document.getElementById('wordle-keyboard').innerHTML = '';
+		document.getElementById('wordle-message').textContent = '';
+		addWordleRow();
+		buildWordleKeyboard();
+		document.addEventListener('keydown', handleWordleKey);
+	}
+
+	function addWordleRow() {
+		const grid = document.getElementById('wordle-grid');
+		const row = document.createElement('div');
+		row.className = 'wordle-row';
+		for (let i = 0; i < 5; i++) {
+			const cell = document.createElement('div');
+			cell.className = 'wordle-cell';
+			row.appendChild(cell);
+		}
+		grid.appendChild(row);
+		wordleCurrentRow = row;
+	}
+
+	function handleWordleKey(e) {
+		if (!wordleActive) return;
+		if (e.key === 'Enter') {
+			submitWordleGuess();
+		} else if (e.key === 'Backspace') {
+			wordleDeleteLetter();
+		} else if (/^[a-zA-Z]$/.test(e.key)) {
+			wordleAddLetter(e.key.toUpperCase());
+		}
+	}
+
+	function wordleAddLetter(letter) {
+		if (wordleCurrentGuess.length >= 5) return;
+		wordleCurrentGuess.push(letter);
+		const cells = wordleCurrentRow.querySelectorAll('.wordle-cell');
+		cells[wordleCurrentGuess.length - 1].textContent = letter;
+	}
+
+	function wordleDeleteLetter() {
+		if (wordleCurrentGuess.length === 0) return;
+		const cells = wordleCurrentRow.querySelectorAll('.wordle-cell');
+		cells[wordleCurrentGuess.length - 1].textContent = '';
+		wordleCurrentGuess.pop();
+	}
+
+	function submitWordleGuess() {
+		if (wordleCurrentGuess.length < 5) {
+			showWordleMessage('not enough letters!');
+			return;
+		}
+		const guess = wordleCurrentGuess.join('');
+		const result = evaluateWordleGuess(guess);
+		colorWordleRow(wordleCurrentRow, wordleCurrentGuess, result);
+		updateWordleKeyboard(wordleCurrentGuess, result);
+		wordleCurrentGuess = [];
+
+		if (guess === WORDLE_ANSWER) {
+			wordleActive = false;
+			document.removeEventListener('keydown', handleWordleKey);
+			showWordleMessage('you got it!');
+			setTimeout(function() {
+				const section = document.getElementById('wordle-section');
+				section.style.opacity = '0';
+				setTimeout(function() {
+					section.style.display = 'none';
+					document.getElementById('unscramble-section').style.display = 'block';
+					initUnscramble();
+				}, 400);
+			}, 1500);
+		} else {
+			setTimeout(addWordleRow, 300);
+		}
+	}
+
+	function evaluateWordleGuess(guess) {
+		const result = Array(5).fill('absent');
+		const answerArr = WORDLE_ANSWER.split('');
+		const guessArr = guess.split('');
+
+		guessArr.forEach(function(letter, i) {
+			if (letter === answerArr[i]) {
+				result[i] = 'correct';
+				answerArr[i] = null;
+				guessArr[i] = null;
+			}
+		});
+
+		guessArr.forEach(function(letter, i) {
+			if (!letter) return;
+			const idx = answerArr.indexOf(letter);
+			if (idx !== -1) {
+				result[i] = 'present';
+				answerArr[idx] = null;
+			}
+		});
+
+		return result;
+	}
+
+	function colorWordleRow(row, guess, result) {
+		const cells = row.querySelectorAll('.wordle-cell');
+		cells.forEach(function(cell, i) {
+			setTimeout(function() {
+				cell.classList.add(result[i]);
+			}, i * 100);
+		});
+	}
+
+	function updateWordleKeyboard(guess, result) {
+		const priority = { correct: 3, present: 2, absent: 1 };
+		guess.forEach(function(letter, i) {
+			const key = document.querySelector('.wordle-key[data-letter="' + letter + '"]');
+			if (!key) return;
+			const current = key.dataset.state || '';
+			if ((priority[result[i]] || 0) > (priority[current] || 0)) {
+				key.dataset.state = result[i];
+				key.className = 'wordle-key' + (key.classList.contains('wide') ? ' wide' : '') + ' ' + result[i];
+			}
+		});
+	}
+
+	function showWordleMessage(msg) {
+		const el = document.getElementById('wordle-message');
+		el.textContent = msg;
+		if (msg !== 'you got it!') {
+			setTimeout(function() { el.textContent = ''; }, 2000);
+		}
+	}
+
+	function buildWordleKeyboard() {
+		const rows = [
+			['Q','W','E','R','T','Y','U','I','O','P'],
+			['A','S','D','F','G','H','J','K','L'],
+			['ENTER','Z','X','C','V','B','N','M','⌫']
+		];
+		const kb = document.getElementById('wordle-keyboard');
+		rows.forEach(function(row) {
+			const rowEl = document.createElement('div');
+			rowEl.className = 'wordle-kb-row';
+			row.forEach(function(key) {
+				const btn = document.createElement('button');
+				const isWide = key === 'ENTER' || key === '⌫';
+				btn.className = 'wordle-key' + (isWide ? ' wide' : '');
+				btn.textContent = key;
+				if (!isWide) btn.dataset.letter = key;
+				btn.addEventListener('click', function() {
+					if (key === 'ENTER') submitWordleGuess();
+					else if (key === '⌫') wordleDeleteLetter();
+					else wordleAddLetter(key);
+				});
+				rowEl.appendChild(btn);
+			});
+			kb.appendChild(rowEl);
+		});
+	}
+
+	// ── Unscramble "UNDER YOUR BED" ──
 	const PHRASE_WORDS = ["UNDER", "YOUR", "BED"];
 	const SCRAMBLED_TILES = ["B", "E", "R", "U", "N", "D", "O", "Y", "U", "E", "R", "D"];
 	let selectedTile = null;
